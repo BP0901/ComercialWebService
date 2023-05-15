@@ -15,6 +15,12 @@ public class CartLineItem {
     @Column(name = "id")
     private long id;
 
+    @Column(name = "price")
+    private float price;
+
+    @Column(name = "amount")
+    private int amount;
+
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;

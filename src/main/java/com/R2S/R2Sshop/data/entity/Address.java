@@ -16,7 +16,7 @@ public class Address {
     private long id;
 
     @Column(name = "address")
-    private long address;
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
