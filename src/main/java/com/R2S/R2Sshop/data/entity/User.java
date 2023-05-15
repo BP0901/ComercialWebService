@@ -16,10 +16,10 @@ public class User {
     private long id;
 
     @Column(name = "username", unique=true)
-    private long username;
+    private String username;
 
     @Column(name = "password")
-    private long password;
+    private String password;
 
     @OneToOne
     @MapsId
@@ -36,4 +36,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
+
+    @Column(name = "status")
+    private boolean status;
+
 }
