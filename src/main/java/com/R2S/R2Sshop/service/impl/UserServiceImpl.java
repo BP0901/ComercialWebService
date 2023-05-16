@@ -37,6 +37,9 @@ public class UserServiceImpl implements UserService {
         if(role.isPresent())
             createUserDTO.setRoleDTO(roleMapper.toDTO(role.get()));
         else throw new Exception("Role not found!");
+//        User user = userMapper.toEntity(createUserDTO);
+//        user = userRepository.save(user);
         return createUserDTO;
+//        return userMapper.toCreateUserDTO(userRepository.save(userMapper.toEntity(createUserDTO)));
     }
 }

@@ -1,5 +1,6 @@
 package com.R2S.R2Sshop.service.impl;
 
+import com.R2S.R2Sshop.config.CustomUserDetail;
 import com.R2S.R2Sshop.data.dto.LoginRequestDTO;
 import com.R2S.R2Sshop.data.entity.User;
 import com.R2S.R2Sshop.data.repository.UserRepository;
@@ -33,6 +34,7 @@ public class LoginServiceImpl implements LoginService {
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(),
                         loginRequestDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return this.jwtUtils.generateJwtToken(authentication);
+        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
+        return this.jwtUtils.generateToken(userDetails);
     }
 }

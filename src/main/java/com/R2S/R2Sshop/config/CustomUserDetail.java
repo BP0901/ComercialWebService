@@ -1,26 +1,35 @@
 package com.R2S.R2Sshop.config;
 
+import com.R2S.R2Sshop.data.entity.Role;
 import com.R2S.R2Sshop.data.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class CustomUserDetail implements UserDetails {
-    private final String username;
-    private final String password;
-    private final Set<GrantedAuthority> authorities; //ROLE_ADMIN, ROLE_CLIENT
-    private final Boolean status;
+    private String username;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities; //ROLE_ADMIN, ROLE_CLIENT
+    private Boolean status;
 
     public CustomUserDetail(User user) {
+        List<Role> roles = new ArrayList<>();
+        roles.add(user.getRole());
+        List<GrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
         this.username = user.getUsername();
         this.password = user.getPassword();
+        this.authorities = authorities;
         this.status = user.isStatus();
-        this.authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()));
     }
 
     @Override

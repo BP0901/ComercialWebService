@@ -5,6 +5,7 @@ import com.R2S.R2Sshop.service.CategoryService;
 import com.R2S.R2Sshop.util.constant.ApiURL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ public class CategoryController {
     public ResponseEntity<?> findAll(){
         return ResponseEntity.ok(categoryService.findAll());
     }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CategoryDTO categoryDTO){
         return ResponseEntity.ok(categoryService.create(categoryDTO));

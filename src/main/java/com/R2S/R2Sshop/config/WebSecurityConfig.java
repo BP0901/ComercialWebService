@@ -24,6 +24,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationEntryPoint authEntryPointJwt;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -47,8 +50,9 @@ public class WebSecurityConfig {
                                                    UserDetailsService userDetailsService, JwtRequestFilter filter) throws Exception {
         return httpSecurity.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/api/users", "/login").permitAll()
-                .and()
+                .requestMatchers(HttpMethod.POST, "/api/users", "/api/login").permitAll()
+                .and().cors()  .and()
+                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
                 .authorizeHttpRequests()
                 .anyRequest().authenticated()
                 .and()

@@ -1,5 +1,6 @@
 package com.R2S.R2Sshop.util;
 
+import com.R2S.R2Sshop.config.CustomUserDetail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +18,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtTokenUtil {
+public class JwtTokenUtil implements Serializable {
+
+    private static final long serialVersionUID = -2550185165626007488L;
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
@@ -24,7 +28,7 @@ public class JwtTokenUtil {
     private int jwtExpirationMs;
 
     @Value("${jwt.secret}")
-    private String secret;
+    private String jwtSecret;
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -42,7 +46,7 @@ public class JwtTokenUtil {
     }
         //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     }
 
     //check if the token has expired
@@ -51,17 +55,7 @@ public class JwtTokenUtil {
         return expiration.before(new Date());
     }
 
-    public String generateJwtToken(Authentication authentication) {
 
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-        Claims claims = Jwts.claims().setSubject(userPrincipal.getUsername());
-        claims.put("role", authentication.getAuthorities().stream()
-                .map(item -> new SimpleGrantedAuthority(item.getAuthority())).collect(Collectors.toList()));
-        return Jwts.builder()
-                .setClaims(claims).setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS256, secret).compact();
-    }
 
     //generate token for user
     public String generateToken(UserDetails userDetails) {
@@ -78,7 +72,7 @@ public class JwtTokenUtil {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+                .signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
     }
 
     //validate token
