@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +13,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenUtil {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
+    @Value("${jwtExpirationMs}")
+    private int jwtExpirationMs;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -44,6 +49,18 @@ public class JwtTokenUtil {
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
+    }
+
+    public String generateJwtToken(Authentication authentication) {
+
+        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        Claims claims = Jwts.claims().setSubject(userPrincipal.getUsername());
+        claims.put("role", authentication.getAuthorities().stream()
+                .map(item -> new SimpleGrantedAuthority(item.getAuthority())).collect(Collectors.toList()));
+        return Jwts.builder()
+                .setClaims(claims).setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
     //generate token for user

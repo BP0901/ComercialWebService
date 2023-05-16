@@ -4,4 +4,6 @@ public class ApiURL {
     public static final String CATEGORIES = Constant.API + Constant.CATEGORIES;
 
     public static final String USERS = Constant.API + Constant.USERS;
+
+    public static final String LOGIN = Constant.API + Constant.LOGIN;
 }

@@ -4,4 +4,6 @@ public class Constant {
     public static final String API = "api";
     public static final String CATEGORIES = "/categories";
     public static final String USERS = "/users";
+
+    public static final String LOGIN = "/login";
 }

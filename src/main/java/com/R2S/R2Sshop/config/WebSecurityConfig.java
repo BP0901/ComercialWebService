@@ -47,7 +47,7 @@ public class WebSecurityConfig {
                                                    UserDetailsService userDetailsService, JwtRequestFilter filter) throws Exception {
         return httpSecurity.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users", "/login").permitAll()
                 .and()
                 .authorizeHttpRequests()
                 .anyRequest().authenticated()
